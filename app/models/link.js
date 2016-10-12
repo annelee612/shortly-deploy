@@ -12,6 +12,7 @@ var Link = db.Model.extend({
       var shasum = crypto.createHash('sha1');
       shasum.update(model.get('url'));
       model.set('code', shasum.digest('hex').slice(0, 5));
+      console.log('hello');
     });
   }
 });
