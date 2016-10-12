@@ -3,6 +3,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: ['public/client/*.js'],
+        dest: 'dist/built.js',
+      },
     },
 
     mochaTest: {
@@ -21,11 +28,18 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      images: {
+        files: {
+          'public/client/built.min.js': ['dist/built.js']
+        }
+      }
     },
 
     eslint: {
       target: [
-        // Add list of files to lint here
+        'public/client/app.js', 'public/client/createLinkView.js', 'public/client/link.js', 
+        'public/client/links.js', 'public/client/linksView.js', 'public/client/linkView.js',
+        'public/client/router.js'
       ]
     },
 
@@ -51,6 +65,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git add . && git commit -m "A commit" && git push live master'
       }
     },
   });
@@ -81,7 +96,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      // add your production server task here
+      grunt.task.run(['shell']);
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
@@ -89,7 +104,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
+    'eslint', 'test', 'concat', 'uglify', 'upload'
   ]);
-
-
 };
