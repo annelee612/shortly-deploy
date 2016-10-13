@@ -9,12 +9,27 @@ var userSchema =  mongoose.Schema({
   'password': String
 });
 
-userSchema.statics.comparePassword = function(attemptedPassword, callback) {
-  console.log('we are comparing passwords');
-  bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
-    callback(isMatch);
-  });
-};
+userSchema.pre('save', function(next) {
+  console.log('making hash password');
+  var cipher = Promise.promisify(bcrypt.hash);
+  cipher(this.password, null, null).bind(this)
+    .then(function(hash) {
+      console.log('setting password with hash');
+      console.log(hash);
+      this.password = hash;
+      next();
+    });
+});
+
+userSchema.method('comparePassword', function(attemptedPassword, callback) {
+  // if (this.password === 'Phillip') {
+  //   callback(true);
+  // } else {
+    bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
+      callback(isMatch);
+    });    
+  // }
+});
 
 
 var User = mongoose.model('User', userSchema);

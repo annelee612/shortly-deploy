@@ -188,6 +188,7 @@ describe('', function() {
     });
 
     it('Successful signup logs in a new user', function(done) {
+      this.timeout(4000);
       request(app)
         .post('/signup')
         .send({
@@ -195,17 +196,19 @@ describe('', function() {
           'password': 'Phillip' })
         .expect(302)
         .expect(function(res) {
+          console.log(res.headers.location);
           expect(res.headers.location).to.equal('/');
-          request(app)
-            .get('/logout')
-            .expect(200);
+           request(app)
+             .get('/logout')
+             .expect(200);
         })
         .end(done);
     });
 
   }); // 'Account Creation'
 
-  xdescribe('Account Login:', function() {
+  describe('Account Login:', function() {
+    this.timeout(10000);
 
     beforeEach(function(done) {
       new User({
@@ -217,6 +220,7 @@ describe('', function() {
     });
 
     it('Logs in existing users', function(done) {
+      this.timeout(4000);
       request(app)
         .post('/login')
         .send({
@@ -230,6 +234,7 @@ describe('', function() {
     });
 
     it('Users that do not exist are kept on login page', function(done) {
+      this.timeout(4000);
       request(app)
         .post('/login')
         .send({
